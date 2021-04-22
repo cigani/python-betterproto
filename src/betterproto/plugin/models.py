@@ -61,10 +61,10 @@ from dataclasses import dataclass, field
 from typing import Dict, Iterable, Iterator, List, Optional, Set, Text, Type, Union
 import sys
 
-from ..casing import sanitize_name
 from ..compile.importing import get_type_reference, parse_source_type_name
 from ..compile.naming import (
     pythonize_class_name,
+    pythonize_enum_member_name,
     pythonize_field_name,
     pythonize_method_name,
 )
@@ -585,7 +585,9 @@ class EnumDefinitionCompiler(MessageCompiler):
         # Get entries/allowed values for this Enum
         self.entries = [
             self.EnumEntry(
-                name=sanitize_name(entry_proto_value.name),
+                name=pythonize_enum_member_name(
+                    entry_proto_value.name, self.proto_obj.name
+                ),
                 value=entry_proto_value.number,
                 comment=get_comment(
                     proto_file=self.source_file, path=self.path + [2, entry_number]
